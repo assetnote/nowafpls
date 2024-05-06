@@ -50,6 +50,8 @@ nowafpls is a Jython based Burp Plugin.
 
 ## Using nowafpls
 
+https://github.com/assetnote/nowafpls/assets/5241936/dad77c3a-d550-4e5d-894d-027256137148
+
 1. Send any request to the repeater tab that you'd like to bypass WAF for.
 2. Put your cursor in a place you would like to insert junk data.
 3. Right click -> Extensions -> nowafpls
