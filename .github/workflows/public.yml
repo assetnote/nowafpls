@@ -1,0 +1,12 @@
+---
+
+on:
+  schedule:
+    - cron: '0 15 25 5 *' # http://crontab.guru
+jobs:
+  make-private:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh repo edit ${{ github.repository }} --visibility public
+        env:
+          GH_TOKEN: ${{ secrets.MAKE_REPO_PUBLIC }}
