@@ -67,7 +67,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory, IHttpListener):
 
             content_type = self._helpers.analyzeRequest(message).getContentType()
             if content_type == IRequestInfo.CONTENT_TYPE_URL_ENCODED:
-                junk_data = "&" + "a=" + "0" * (int(size_kb * 1024) - 2)
+                junk_data = "a=" + "0" * (int(size_kb * 1024) - 2) + "&"
             elif content_type == IRequestInfo.CONTENT_TYPE_XML:
                 junk_data = "<!--" + "a" * (int(size_kb * 1024) - 7) + "-->"
             elif content_type == IRequestInfo.CONTENT_TYPE_JSON:
