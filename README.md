@@ -60,6 +60,14 @@ https://github.com/assetnote/nowafpls/assets/5241936/dad77c3a-d550-4e5d-894d-027
 
 nowafpls will insert junk data as per the type of request (URLEncoded/XML/JSON) automatically.
 
+## Caido Version
+
+The Caido version of this plugin is maintained by @Rhynorater and can be found at the below gist:
+```
+https://gist.github.com/Rhynorater/ace68d4976357ca0937cb4669f303306
+```
+or in the [EvenBetter Workflow Library](https://github.com/bebiksior/EvenBetter/tree/main/workflows). 
+
 ## Authors
 
 * **Shubham Shah** - *Initial work* - [github](https://github.com/infosec-au)
