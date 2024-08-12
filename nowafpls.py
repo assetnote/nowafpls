@@ -3,6 +3,7 @@ from javax.swing import JMenuItem, JLabel, JTextField, JOptionPane, JPanel, JFra
 import javax.swing as swing
 from java.util import ArrayList
 from java.io import ByteArrayOutputStream
+import re
 
 class BurpExtender(IBurpExtender, IContextMenuFactory, IHttpListener):
     def registerExtenderCallbacks(self, callbacks):
@@ -58,20 +59,22 @@ class BurpExtender(IBurpExtender, IContextMenuFactory, IHttpListener):
             selected_size = dropdown.getSelectedItem()
             if selected_size == "Custom":
                 try:
-                    size_kb = int(custom_size_field.getText()) / 1024.0
+                    size_bytes = int(custom_size_field.getText())
                 except ValueError:
                     JOptionPane.showMessageDialog(None, "Please enter a valid number for custom size.")
                     return
             else:
-                size_kb = int(selected_size.split()[0])
+                size_bytes = int(selected_size.split()[0]) * 1024
 
             content_type = self._helpers.analyzeRequest(message).getContentType()
             if content_type == IRequestInfo.CONTENT_TYPE_URL_ENCODED:
-                junk_data = "a=" + "0" * (int(size_kb * 1024) - 2) + "&"
+                junk_data = "a=" + "0" * (size_bytes - 2) + "&"
             elif content_type == IRequestInfo.CONTENT_TYPE_XML:
-                junk_data = "<!--" + "a" * (int(size_kb * 1024) - 7) + "-->"
+                junk_data = "<!--" + "a" * (size_bytes - 7) + "-->"
             elif content_type == IRequestInfo.CONTENT_TYPE_JSON:
-                junk_data = '"junk":"' + "0" * (int(size_kb * 1024) - 10) + '"' + ','
+                junk_data = '"junk":"' + "0" * (size_bytes - 10) + '"' + ','
+            elif content_type == IRequestInfo.CONTENT_TYPE_MULTIPART:
+                junk_data = self.create_multipart_junk(request, size_bytes)
             else:
                 return
 
@@ -81,6 +84,28 @@ class BurpExtender(IBurpExtender, IContextMenuFactory, IHttpListener):
             baos.write(request[insertion_point:])
             message.setRequest(baos.toByteArray())
 
-    # ya'll can make this happen on all http reqs if you want but I haven't built this yet
+    def create_multipart_junk(self, request, size):
+        request_string = self._helpers.bytesToString(request)
+        boundary = re.search(r'boundary=([\w-]+)', request_string)
+        if not boundary:
+            return ""
+
+        boundary = boundary.group(1)
+        junk_field_name = "junk_data"
+        
+        multipart_structure = (
+            "--{0}\r\n"
+            "Content-Disposition: form-data; name=\"{1}\"\r\n\r\n"
+            "{2}\r\n"
+        )
+        
+        structure_size = len(multipart_structure.format(boundary, junk_field_name, ""))
+        junk_data_size = size - structure_size
+        junk_data = "0" * junk_data_size
+
+        multipart_junk = multipart_structure.format(boundary, junk_field_name, junk_data)
+
+        return multipart_junk
+
     def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
         pass
