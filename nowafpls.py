@@ -147,6 +147,3 @@ class BurpExtender(IBurpExtender, IContextMenuFactory, IHttpListener):
         
         multipart_junk = multipart_structure.format(boundary, junk_field_name, junk_data)
         return multipart_junk
-
-    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
-        pass
