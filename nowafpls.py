@@ -1,4 +1,4 @@
-from burp import IBurpExtender, IContextMenuFactory, IHttpListener, IRequestInfo, IContextMenuInvocation
+from burp import IBurpExtender, IContextMenuFactory, IRequestInfo, IContextMenuInvocation
 from javax.swing import JMenuItem, JLabel, JTextField, JOptionPane, JPanel, JFrame
 import javax.swing as swing
 from java.util import ArrayList
@@ -7,13 +7,12 @@ import re
 import random
 import string
 
-class BurpExtender(IBurpExtender, IContextMenuFactory, IHttpListener):
+class BurpExtender(IBurpExtender, IContextMenuFactory):
     def registerExtenderCallbacks(self, callbacks):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
         callbacks.setExtensionName("nowafpls")
         callbacks.registerContextMenuFactory(self)
-        callbacks.registerHttpListener(self)
 
     def createMenuItems(self, invocation):
         self.context = invocation
